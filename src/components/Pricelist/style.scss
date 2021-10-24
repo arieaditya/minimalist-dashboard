@@ -1,4 +1,35 @@
-.test {
+.wrapper-title {
+    margin-top: 90px;
+}
+
+.page-title {
     font-size: 24px;
+    font-weight: bold;
     color: red;
+}
+
+.search-input {
+    background: #FFFFFF;
+    border: 2px solid #DCD8FB;
+    border-right: none;
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.search-icon {
+    opacity: 50%;
+    width: 24px;
+}
+
+.input-search {
+    border-left: none;
+    border: 2px solid #DCD8FB;
+    border-radius: 10px;
+}
+
+.pl-lg-100 {
+    @media (min-width: 992px) {
+        padding-left: 100px;
+    }
 }

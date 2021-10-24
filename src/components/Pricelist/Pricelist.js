@@ -1,15 +1,17 @@
-import React from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { 
-    Box,
     Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow
-} from '@mui/material';
+    InputGroup,
+    Container,
+    FormControl,
+    Navbar,
+    Dropdown
+} from 'react-bootstrap';
 import SteinStore from "stein-js-client";
 import "@fontsource/sarabun";
-import "./style.scss"
+import "./style.scss";
+import SearchIcon from "../../assets/icons/magnifier.svg";
+import Logo from "../../assets/logo.svg"
 
 const store = new SteinStore(
   "https://stein.efishery.com/v1/storages/5e1edf521073e315924ceab4"
@@ -17,68 +19,146 @@ const store = new SteinStore(
 
 const Pricelist = () => {
 
-    const [data, setData] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [totalData, setIsTotal] = React.useState('');
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [totalData, setIsTotal] = useState('');
+    const inputSearchRef = useRef(null);
 
-    React.useEffect(() => {
-        // if(isLoading){
+    const filterUnwanted = (arr) => {
+        const required = arr.filter(el => {
+        return el.uuid && el.komoditas && el.tgl_parsed;
+        });
+        return required;
+    };
+    
+    useEffect(() => {
         store.read("list").then((data) => {
-          
-            const filterUnwanted = (arr) => {
-                const required = arr.filter(el => {
-                return el.uuid && el.komoditas && el.tgl_parsed;
-                });
-                return required;
-            };
-            //   console.log(filterUnwanted(data));
-            //   console.log(this.state.isLoading);
             setIsLoading(false);
             setData(filterUnwanted(data));
             setIsTotal(filterUnwanted(data).length);
-          
+            console.log(filterUnwanted(data));
         });
+    }, []);
 
+    useEffect(() => {
+        const keyPress = (e) => {
+            if (e.code === "Enter" || e.code === "NumpadEnter") {
+              console.log(inputSearchRef.current.value);
+              if (inputSearchRef.current.value === "" || inputSearchRef.current.value === undefined) {
+                store.read("list").then(data => {
+                    setIsLoading(false);
+                    setData(filterUnwanted(data));
+                    setIsTotal(filterUnwanted(data).length);
+                });   
+              } else {
+                store.read("list", { search: { komoditas: `${inputSearchRef.current.value}` } }).then(data => {
+                    setIsLoading(false);
+                    setData(filterUnwanted(data));
+                    setIsTotal(filterUnwanted(data).length);
+                });   
+              }
+            }
+        };
+        document.addEventListener("keydown", keyPress);
+        return () => {
+            document.removeEventListener("keydown", keyPress);
+        };
+
+    }, []);
 
     
-      });
     return (
-        <React.Fragment>
-            <Box>
-                <h1 className="test">List Harga</h1>
-                <p>{totalData} data ditemukan</p>
-            </Box>
-            <Table className="table" size="small">
-                <TableHead>
-                <TableRow>
-                    <TableCell>No</TableCell>
-                    <TableCell>Komoditas</TableCell>
-                    <TableCell>Provinsi</TableCell>
-                    <TableCell>Kota</TableCell>
-                    <TableCell>Jumlah</TableCell>
-                    <TableCell>Harga</TableCell>
-                    <TableCell align="right">Tanggal Dibuat</TableCell>
-                </TableRow>
-                </TableHead>
-                <TableBody>
-                {!isLoading &&
-                data.map((item, key) => {
-                    return (
-                        <TableRow key={key}>
-                            <TableCell>{key + 1}</TableCell>
-                            <TableCell>{item.komoditas}</TableCell>
-                            <TableCell>{item.area_provinsi}</TableCell>
-                            <TableCell>{item.area_kota}</TableCell>
-                            <TableCell>{item.size}</TableCell>
-                            <TableCell>{item.price}</TableCell>
-                            <TableCell align="right">{(new Date(item.tgl_parsed)).toLocaleDateString('id-ID', { year: '2-digit', month: 'short', day: '2-digit' })}</TableCell>
-                        </TableRow>
-                    );
-                })}
+        
+        <Fragment>
+            <Container>
+                <Navbar expand="lg" variant="light" bg="light" fixed="top" >
+                    <Container>
+                        <Navbar.Brand href="#">
+                            <img src={Logo} alt="logo"/>
+                        </Navbar.Brand>
+                        <Navbar.Toggle aria-controls="navbarScroll" />
+                        <Navbar.Collapse id="navbarScroll" className="justify-content-end">
+                            <InputGroup className="d-flex pl-lg-100">
+                                <InputGroup.Text className="search-input">
+                                    <img src={SearchIcon} className="search-icon" alt="search-icon" width="24" height="24"/>
+                                </InputGroup.Text>
+                                <FormControl
+                                    type="search"
+                                    placeholder="Cari Komoditas"
+                                    className="input-search"
+                                    aria-label="Search"
+                                    // value={inputSearch}
+                                    // onKeyDown={keyPress}
+                                    ref={inputSearchRef}
+                                />
+                            </InputGroup>
 
-                </TableBody>
-            </Table>
-        </React.Fragment>   
+                            <Dropdown className="d-inline mx-2">
+                                <Dropdown.Toggle id="dropdown-autoclose-true">
+                                Pilih Provinsi
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+
+                            <Dropdown className="d-inline mx-2">
+                                <Dropdown.Toggle id="dropdown-autoclose-true">
+                                Urutkan
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                <Dropdown.Item href="#">Berdasarkan Abjad (A-Z)</Dropdown.Item>
+                                <Dropdown.Item href="#">Harga Terendah</Dropdown.Item>
+                                <Dropdown.Item href="#">Tanggal Dibuat</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+
+                        </Navbar.Collapse>
+
+                        
+                    </Container>
+                </Navbar>
+           
+                <div className="wrapper-title">
+                    <h1 className="page-title">List Harga</h1>
+                    <p>{totalData} data ditemukan</p>
+                </div>
+
+                <Table responsive="sm">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Komoditas</th>
+                            <th>Provinsi</th>
+                            <th>Kota</th>
+                            <th>Jumlah</th>
+                            <th>Harga</th>
+                            <th>Tanggal Dibuat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {!isLoading &&
+                        data.map((item, key) => {
+                            return (
+                                <tr key={key}>
+                                    <th>{key + 1}</th>
+                                    <th>{item.komoditas}</th>
+                                    <th>{item.area_provinsi}</th>
+                                    <th>{item.area_kota}</th>
+                                    <th>{item.size}</th>
+                                    <th>{item.price}</th>
+                                    <th>{(new Date(item.tgl_parsed)).toLocaleDateString('id-ID', { year: '2-digit', month: 'short', day: '2-digit' })}</th>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+            </Container>
+        </Fragment>   
     );
 };
 
