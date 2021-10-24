@@ -1,7 +1,13 @@
-# Getting Started with Create React App
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d466a6ab-07e7-4a3c-b09e-890c596b5504/deploy-status)](https://app.netlify.com/sites/minimalist-dashboard/deploys)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Minimalist Dashboard
 
+This project was bootstrapped with 
+
+- [Create React App](https://github.com/facebook/create-react-app).
+- React Bootstrap (for component)
+- SASS (for styles)
+- Stein (for data)
 ## Available Scripts
 
 In the project directory, you can run:
