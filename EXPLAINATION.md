@@ -5,13 +5,21 @@ This view is made based on my experience as a user in using the admin dashboard.
 ## Features
 
 The features in this application consist of:
+
 1. PWA
+
 Progressive Web Apps (PWA) can be installed directly on a user’s home screen and can run in a standalone window. These apps run fast and reliably under poor network conditions and can even function offline.
+
 2. Search
+
 Users can search for data by commodity name by inputting the desired keyword (case-sensitive).
+
 3. Sorting
+
 Users can sort data based on the lowest price, highest price, lowest amount, to the highest amount.
+
 4. Add data
+
 User can add data to the list
 
 ## Todo
