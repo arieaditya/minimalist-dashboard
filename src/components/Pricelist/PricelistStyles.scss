@@ -3,23 +3,41 @@
     display: inline-flex;
     align-items: baseline;
     h1 {
-        font-size: 24px;
+        @media (max-width: 991px) {
+            font-size: 24px;
+        }
+        font-size: 30px;
         font-weight: bold;
-        color: red;
+        color: #414141;
     }
     p {
-        margin-left: 15px;
-    }
-    .add-item {
-        float: right;
+        @media (max-width: 991px) {
+            font-size: 12px;
+        }
+        margin-left: 15px; 
+        font-weight: bold;
+        font-size: 18px;
+        color: #7B7B7B;
     }
 }
 
 .wrapper-action {
+    @media (min-width: 992px) {
+        margin-top: 90px;
+    }
     float: right;
-    margin-top: 90px;
+    margin-top: 85px;
+    .btn-add {
+        padding: 8px 32px;
+        @media (max-width: 991px) {
+            padding: 8px 16px;
+        }
+    }
 }
 
+.header-container {
+    height: 50px;
+}
 
 .search-input {
     background: #FFFFFF;
@@ -41,8 +59,40 @@
     border-radius: 10px;
 }
 
-.pl-lg-100 {
+.input-container {
     @media (min-width: 992px) {
         padding-left: 100px;
     }
+    padding: 24px;
+}
+
+.table-responsive {
+    @media (max-width: 991px) {
+        font-size: 14px;
+    }
+}
+
+.table > thead {
+    text-transform: uppercase;
+    background-color: #414141;
+    color: white;
+}
+
+.btn-sort {
+    padding: 8px 24px;
+    @media(max-width: 991px) {
+        padding: 8px 48px;
+        display: block;
+        margin: 0 auto;
+        bottom: 14px;
+        position: relative;
+        width: 91%;
+    }
+}
+
+.navbar-mobile-container{
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+    position: relative;
+    top: 10px;
 }
