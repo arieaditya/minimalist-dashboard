@@ -1,12 +1,25 @@
 .wrapper-title {
     margin-top: 90px;
+    display: inline-flex;
+    align-items: baseline;
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        color: red;
+    }
+    p {
+        margin-left: 15px;
+    }
+    .add-item {
+        float: right;
+    }
 }
 
-.page-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: red;
+.wrapper-action {
+    float: right;
+    margin-top: 90px;
 }
+
 
 .search-input {
     background: #FFFFFF;
@@ -18,7 +31,7 @@
 }
 
 .search-icon {
-    opacity: 50%;
+    opacity: 0.5;
     width: 24px;
 }
 
