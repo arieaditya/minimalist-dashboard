@@ -2,6 +2,8 @@
 
 # Minimalist Dashboard
 
+See [EXPLAINING.md](https://github.com/arieaditya/minimalist-dashboard/blob/master/EXPLAINATION.md) file for the details
+
 View project live -> [https://minimalist-dashboard.netlify.app/](https://minimalist-dashboard.netlify.app/)
 
 This project was bootstrapped with 
