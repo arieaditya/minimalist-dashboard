@@ -2,7 +2,7 @@
 
 # Minimalist Dashboard
 
-[View project live](https://minimalist-dashboard.netlify.app/)
+View project live -> [https://minimalist-dashboard.netlify.app/](https://minimalist-dashboard.netlify.app/)
 
 This project was bootstrapped with 
 
