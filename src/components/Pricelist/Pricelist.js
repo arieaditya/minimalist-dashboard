@@ -14,6 +14,7 @@ import "@fontsource/sarabun";
 import "./PricelistStyles.scss";
 import SearchIcon from "../../assets/icons/magnifier.svg";
 import Logo from "../../assets/logo.svg"
+import Skeleton from "../Skeleton/Skeleton";
 
 const store = new SteinStore(
   "https://stein.efishery.com/v1/storages/5e1edf521073e315924ceab4"
@@ -45,6 +46,7 @@ const Pricelist = () => {
 
     useEffect(() => {
         const keyPress = (e) => {
+            setIsLoading(true);
             if (e.code === "Enter" || e.code === "NumpadEnter") {
             //   console.log(inputSearchRef.current.value);
               if (inputSearchRef.current.value === "" || inputSearchRef.current.value === undefined) {
@@ -71,7 +73,7 @@ const Pricelist = () => {
 
     useEffect(()=>{
         const handleSelect = (eventKey) => {
-
+            setIsLoading(true);
             if(eventKey === "1") {
                 store.read("list").then((data) => {
                     let sortedData = [...data].sort((a, b) => a.price - b.price);
@@ -101,8 +103,6 @@ const Pricelist = () => {
                     setIsTotal(filterUnwanted(sortedData).length);
                 });
             }
-        
-            
                
         }
         isMinMaxClick.current = handleSelect;
@@ -113,13 +113,13 @@ const Pricelist = () => {
         <Fragment>
             <Container>
                 <Navbar expand="lg" variant="light" bg="light" fixed="top" >
-                    <Container>
+                    <Container className="header-container">
                         <Navbar.Brand href="#">
                             <img src={Logo} alt="logo"/>
                         </Navbar.Brand>
                         <Navbar.Toggle aria-controls="navbarScroll" />
-                        <Navbar.Collapse id="navbarScroll" className="justify-content-end">
-                            <InputGroup className="d-flex pl-lg-100">
+                        <Navbar.Collapse id="navbarScroll" className="navbar-mobile-container">
+                            <InputGroup className="d-flex input-container">
                                 <InputGroup.Text className="search-input">
                                     <img src={SearchIcon} className="search-icon" alt="search-icon" width="24" height="24"/>
                                 </InputGroup.Text>
@@ -132,20 +132,8 @@ const Pricelist = () => {
                                 />
                             </InputGroup>
 
-                            {/* <Dropdown className="d-inline mx-2">
-                                <Dropdown.Toggle id="dropdown-autoclose-true">
-                                Pilih Provinsi
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
-                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
-                                <Dropdown.Item href="#">Menu Item</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown> */}
-
                             <Dropdown className="d-inline mx-2" onSelect={(e)=>isMinMaxClick.current(e)}>
-                                <Dropdown.Toggle id="dropdown-autoclose-true">
+                                <Dropdown.Toggle id="dropdown-autoclose-true" className="btn-sort">
                                 Urutkan
                                 </Dropdown.Toggle>
 
@@ -162,50 +150,52 @@ const Pricelist = () => {
                         
                     </Container>
                 </Navbar>
-           
-                <div className="wrapper-title">
-                    <h1>List Harga</h1>
-                    <p>{totalData} data ditemukan</p>
-                </div>
-
-                <div className="wrapper-action">
-                    <Link to="/add">
-                        <Button variant="outline-primary" className="add-item">
-                            Tambah Data
-                        </Button>
-                    </Link>
-                </div>
-                
-
-                <Table responsive="sm">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Komoditas</th>
-                            <th>Provinsi</th>
-                            <th>Kota</th>
-                            <th>Jumlah</th>
-                            <th>Harga</th>
-                            <th>Tanggal Dibuat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!isLoading &&
-                        data.map((item, key) => {
-                            return (
-                                <tr key={key}>
-                                    <th>{key + 1}</th>
-                                    <th>{item.komoditas}</th>
-                                    <th>{item.area_provinsi}</th>
-                                    <th>{item.area_kota}</th>
-                                    <th>{item.size}</th>
-                                    <th>{item.price}</th>
-                                    <th>{(new Date(item.tgl_parsed)).toLocaleDateString('id-ID', { year: '2-digit', month: 'short', day: '2-digit' })}</th>
+                {isLoading ? (
+                    <Skeleton/>
+                ) : (
+                    <Fragment>
+                        <div className="wrapper-title">
+                            <h1>List Harga</h1>
+                            <p>{totalData} data ditemukan</p>
+                        </div>
+                        <div className="wrapper-action">
+                            <Link to="/add">
+                                <Button variant="outline-primary" className="btn-add">
+                                    Tambah Data
+                                </Button>
+                            </Link>
+                        </div>
+                        <Table responsive="sm">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Komoditas</th>
+                                    <th>Provinsi</th>
+                                    <th>Kota</th>
+                                    <th>Jumlah</th>
+                                    <th>Harga</th>
+                                    <th>Tanggal Dibuat</th>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+                            </thead>
+                            <tbody>
+                                {!isLoading && data.map((item, key) => {
+                                    return (
+                                        <tr key={key}>
+                                            <th>{key + 1}</th>
+                                            <th>{item.komoditas}</th>
+                                            <th className="capitalize">{item.area_provinsi}</th>
+                                            <th className="capitalize">{item.area_kota}</th>
+                                            <th>{item.size}</th>
+                                            <th>{(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price))}</th>
+                                            <th>{(new Date(item.tgl_parsed)).toLocaleDateString('id-ID', { year: '2-digit', month: 'short', day: '2-digit' })}</th>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </Table>
+                    </Fragment>  
+                )}
+                
             </Container>
         </Fragment>   
     );
