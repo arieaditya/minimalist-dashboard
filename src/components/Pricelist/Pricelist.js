@@ -1,15 +1,17 @@
 import { useEffect, useState, useRef, Fragment } from "react";
+import { Link } from 'react-router-dom';
 import { 
     Table,
     InputGroup,
     Container,
     FormControl,
     Navbar,
-    Dropdown
+    Dropdown,
+    Button
 } from 'react-bootstrap';
 import SteinStore from "stein-js-client";
 import "@fontsource/sarabun";
-import "./style.scss";
+import "./PricelistStyles.scss";
 import SearchIcon from "../../assets/icons/magnifier.svg";
 import Logo from "../../assets/logo.svg"
 
@@ -23,6 +25,8 @@ const Pricelist = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [totalData, setIsTotal] = useState('');
     const inputSearchRef = useRef(null);
+    const isMinMaxClick = useRef(null);
+
 
     const filterUnwanted = (arr) => {
         const required = arr.filter(el => {
@@ -36,14 +40,13 @@ const Pricelist = () => {
             setIsLoading(false);
             setData(filterUnwanted(data));
             setIsTotal(filterUnwanted(data).length);
-            console.log(filterUnwanted(data));
         });
     }, []);
 
     useEffect(() => {
         const keyPress = (e) => {
             if (e.code === "Enter" || e.code === "NumpadEnter") {
-              console.log(inputSearchRef.current.value);
+            //   console.log(inputSearchRef.current.value);
               if (inputSearchRef.current.value === "" || inputSearchRef.current.value === undefined) {
                 store.read("list").then(data => {
                     setIsLoading(false);
@@ -51,7 +54,7 @@ const Pricelist = () => {
                     setIsTotal(filterUnwanted(data).length);
                 });   
               } else {
-                store.read("list", { search: { komoditas: `${inputSearchRef.current.value}` } }).then(data => {
+                store.read("list", {search:{komoditas:`${inputSearchRef.current.value}`}}).then(data => {
                     setIsLoading(false);
                     setData(filterUnwanted(data));
                     setIsTotal(filterUnwanted(data).length);
@@ -66,7 +69,45 @@ const Pricelist = () => {
 
     }, []);
 
-    
+    useEffect(()=>{
+        const handleSelect = (eventKey) => {
+
+            if(eventKey === "1") {
+                store.read("list").then((data) => {
+                    let sortedData = [...data].sort((a, b) => a.price - b.price);
+                    setIsLoading(false);
+                    setData(filterUnwanted(sortedData));
+                    setIsTotal(filterUnwanted(sortedData).length);
+                });
+            } else if(eventKey === "2") {
+                store.read("list").then((data) => {
+                    let sortedData = [...data].sort((a, b) => b.price - a.price);
+                    setIsLoading(false);
+                    setData(filterUnwanted(sortedData));
+                    setIsTotal(filterUnwanted(sortedData).length);
+                });
+            } else if(eventKey === "3") {
+                store.read("list").then((data) => {
+                    let sortedData = [...data].sort((a, b) => a.size - b.size);
+                    setIsLoading(false);
+                    setData(filterUnwanted(sortedData));
+                    setIsTotal(filterUnwanted(sortedData).length);
+                });
+            } else {
+                store.read("list").then((data) => {
+                    let sortedData = [...data].sort((a, b) => b.size - a.size);
+                    setIsLoading(false);
+                    setData(filterUnwanted(sortedData));
+                    setIsTotal(filterUnwanted(sortedData).length);
+                });
+            }
+        
+            
+               
+        }
+        isMinMaxClick.current = handleSelect;
+    },[]);
+
     return (
         
         <Fragment>
@@ -87,13 +128,11 @@ const Pricelist = () => {
                                     placeholder="Cari Komoditas"
                                     className="input-search"
                                     aria-label="Search"
-                                    // value={inputSearch}
-                                    // onKeyDown={keyPress}
                                     ref={inputSearchRef}
                                 />
                             </InputGroup>
 
-                            <Dropdown className="d-inline mx-2">
+                            {/* <Dropdown className="d-inline mx-2">
                                 <Dropdown.Toggle id="dropdown-autoclose-true">
                                 Pilih Provinsi
                                 </Dropdown.Toggle>
@@ -103,17 +142,18 @@ const Pricelist = () => {
                                 <Dropdown.Item href="#">Menu Item</Dropdown.Item>
                                 <Dropdown.Item href="#">Menu Item</Dropdown.Item>
                                 </Dropdown.Menu>
-                            </Dropdown>
+                            </Dropdown> */}
 
-                            <Dropdown className="d-inline mx-2">
+                            <Dropdown className="d-inline mx-2" onSelect={(e)=>isMinMaxClick.current(e)}>
                                 <Dropdown.Toggle id="dropdown-autoclose-true">
                                 Urutkan
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
-                                <Dropdown.Item href="#">Berdasarkan Abjad (A-Z)</Dropdown.Item>
-                                <Dropdown.Item href="#">Harga Terendah</Dropdown.Item>
-                                <Dropdown.Item href="#">Tanggal Dibuat</Dropdown.Item>
+                                <Dropdown.Item eventKey="1">Harga Terendah</Dropdown.Item>
+                                <Dropdown.Item eventKey="2">Harga Tertinggi</Dropdown.Item>
+                                <Dropdown.Item eventKey="3">Jumlah Terendah</Dropdown.Item>
+                                <Dropdown.Item eventKey="4">Jumlah Tertinggi</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
 
@@ -124,9 +164,18 @@ const Pricelist = () => {
                 </Navbar>
            
                 <div className="wrapper-title">
-                    <h1 className="page-title">List Harga</h1>
+                    <h1>List Harga</h1>
                     <p>{totalData} data ditemukan</p>
                 </div>
+
+                <div className="wrapper-action">
+                    <Link to="/add">
+                        <Button variant="outline-primary" className="add-item">
+                            Tambah Data
+                        </Button>
+                    </Link>
+                </div>
+                
 
                 <Table responsive="sm">
                     <thead>
